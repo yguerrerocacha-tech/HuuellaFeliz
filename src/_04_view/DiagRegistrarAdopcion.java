@@ -21,7 +21,7 @@ public class DiagRegistrarAdopcion extends JDialog {
         setTitle("HuellaFeliz - Apertura de Expediente de Adopción");
         setBounds(100, 100, 450, 460);
         setLocationRelativeTo(null);
-        setModal(true); // Bloquea la ventana de atrás
+        setModal(true); 
         setResizable(false);
         getContentPane().setLayout(null);
 
@@ -37,7 +37,6 @@ public class DiagRegistrarAdopcion extends JDialog {
         lblTitulo.setBounds(30, 20, 300, 25);
         panelForm.add(lblTitulo);
 
-        // Campo: Código Adoptante
         JLabel lblCodAdoptante = new JLabel("Código del Adoptante (ID) *");
         lblCodAdoptante.setFont(new Font("Segoe UI", Font.BOLD, 11));
         lblCodAdoptante.setForeground(Color.GRAY);
@@ -49,7 +48,6 @@ public class DiagRegistrarAdopcion extends JDialog {
         txtCodAdoptante.setBounds(30, 85, 170, 35);
         panelForm.add(txtCodAdoptante);
 
-        // Campo: Código Animal
         JLabel lblCodAnimal = new JLabel("Código de la Mascota (ID) *");
         lblCodAnimal.setFont(new Font("Segoe UI", Font.BOLD, 11));
         lblCodAnimal.setForeground(Color.GRAY);
@@ -61,7 +59,6 @@ public class DiagRegistrarAdopcion extends JDialog {
         txtCodAnimal.setBounds(230, 85, 170, 35);
         panelForm.add(txtCodAnimal);
 
-        // Campo: Observaciones
         JLabel lblObservaciones = new JLabel("Observaciones / Acuerdos del Trámite");
         lblObservaciones.setFont(new Font("Segoe UI", Font.BOLD, 11));
         lblObservaciones.setForeground(Color.GRAY);
@@ -78,7 +75,6 @@ public class DiagRegistrarAdopcion extends JDialog {
         txtObservaciones.setWrapStyleWord(true);
         scrollPane.setViewportView(txtObservaciones);
 
-        // Botón: Registrar
         JButton btnGuardar = new JButton("APERTURAR TRÁMITE");
         btnGuardar.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnGuardar.setForeground(Color.WHITE);
@@ -87,13 +83,11 @@ public class DiagRegistrarAdopcion extends JDialog {
         btnGuardar.setBounds(30, 315, 370, 45);
         panelForm.add(btnGuardar);
 
-        // LÓGICA DE PROCESAMIENTO
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 String strAdoptante = txtCodAdoptante.getText().trim();
                 String strAnimal = txtCodAnimal.getText().trim();
 
-                // Validar campos obligatorios
                 if (strAdoptante.isEmpty() || strAnimal.isEmpty()) {
                     javax.swing.JOptionPane.showMessageDialog(null, "Por favor, complete los IDs obligatorios (*).", "Validación", javax.swing.JOptionPane.WARNING_MESSAGE);
                     return;
@@ -109,7 +103,7 @@ public class DiagRegistrarAdopcion extends JDialog {
                     nuevaAdopcion.setEstadoTramite("En Proceso");
                     nuevaAdopcion.setObservaciones(txtObservaciones.getText().trim());
                     nuevaAdopcion.setFechaAdopcion(new java.sql.Date(System.currentTimeMillis())); 
-
+                    
                     _03_model_dao.AdopcionDAO dao = new _03_model_dao.AdopcionDAO();
                     boolean exito = dao.insertar(nuevaAdopcion);
 

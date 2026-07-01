@@ -11,7 +11,7 @@ import java.util.List;
 
 public class HistorialClinicoDAO {
 
-    // Método para listar todas las revisiones médicas combinadas con el nombre de la mascota
+    // METODO PARA LISTAR EL HISTORIAL CLINICO EN TU JTABLE
     public List<HistorialClinico> listarTodos() {
         List<HistorialClinico> lista = new ArrayList<>();
         Connection cn = null;
@@ -20,11 +20,9 @@ public class HistorialClinicoDAO {
 
         try {
             cn = Conexion.getConexion();
-            String sql = "SELECT h.codHistorial, h.codAnimal, h.fechaRevision, h.veterinario, h.diagnostico, h.tratamiento, h.proximaCita, "
-                       + "m.nomAnimal "
-                       + "FROM HISTORIAL_CLINICO h "
-                       + "INNER JOIN ANIMAL m ON h.codAnimal = m.codAnimal "
-                       + "ORDER BY h.fechaRevision DESC";
+            String sql = "SELECT h.codHistorial, h.codAnimal, h.fechaRevision, h.veterinario, h.diagnostico, h.tratamiento, h.costoAtencion, h.proximaCita, "
+                       + "a.nomAnimal FROM HISTORIAL_CLINICO h "
+                       + "INNER JOIN ANIMAL a ON h.codAnimal = a.codAnimal";
             
             pstm = cn.prepareStatement(sql);
             rs = pstm.executeQuery();
@@ -37,8 +35,9 @@ public class HistorialClinicoDAO {
                 h.setVeterinario(rs.getString("veterinario"));
                 h.setDiagnostico(rs.getString("diagnostico"));
                 h.setTratamiento(rs.getString("tratamiento"));
+                h.setCostoAtencion(rs.getDouble("costoAtencion"));
                 h.setProximaCita(rs.getDate("proximaCita"));
-                h.setNomAnimal(rs.getString("nomAnimal")); // Nombre recuperado del JOIN
+                h.setNombreAnimal(rs.getString("nomAnimal"));
                 lista.add(h);
             }
         } catch (SQLException e) {
@@ -53,22 +52,30 @@ public class HistorialClinicoDAO {
         return lista;
     }
 
-    // Método para registrar una nueva revisión veterinaria en MySQL
-    public boolean insertar(HistorialClinico historial) {
+    // NUEVO MÉTODO: PERMITE REGISTRAR UNA NUEVA REVISIÓN DESDE DIAGREGISTRARREVISION
+    public boolean insertar(HistorialClinico h) {
         Connection cn = null;
         PreparedStatement pstm = null;
         boolean insertado = false;
 
         try {
             cn = Conexion.getConexion();
-            String sql = "INSERT INTO HISTORIAL_CLINICO (codAnimal, fechaRevision, veterinario, diagnostico, tratamiento, proximaCita) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO HISTORIAL_CLINICO (codAnimal, fechaRevision, veterinario, diagnostico, tratamiento, costoAtencion, proximaCita) "
+                       + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+            
             pstm = cn.prepareStatement(sql);
-            pstm.setInt(1, historial.getCodAnimal());
-            pstm.setDate(2, historial.getFechaRevision());
-            pstm.setString(3, historial.getVeterinario());
-            pstm.setString(4, historial.getDiagnostico());
-            pstm.setString(5, historial.getTratamiento());
-            pstm.setDate(6, historial.getProximaCita()); // Puede ser null si no se programa cita de control
+            pstm.setInt(1, h.getCodAnimal());
+            pstm.setDate(2, h.getFechaRevision());
+            pstm.setString(3, h.getVeterinario());
+            pstm.setString(4, h.getDiagnostico());
+            pstm.setString(5, h.getTratamiento());
+            pstm.setDouble(6, h.getCostoAtencion());
+            
+            if (h.getProximaCita() != null) {
+                pstm.setDate(7, h.getProximaCita());
+            } else {
+                pstm.setNull(7, java.sql.Types.DATE);
+            }
 
             if (pstm.executeUpdate() > 0) {
                 insertado = true;

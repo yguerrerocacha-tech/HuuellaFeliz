@@ -97,9 +97,6 @@ public class PanGestionRescates extends JPanel {
             }
         });
 
-        // ========================================================
-        // SOLUCIÓN: INICIALIZACIÓN DE CONTENEDORES Y TABLA
-        // ========================================================
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setBounds(25, 155, 769, 340);
         add(scrollPane);
@@ -120,7 +117,6 @@ public class PanGestionRescates extends JPanel {
         tableRescates.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
         tableRescates.getTableHeader().setReorderingAllowed(false);
         
-        // Asociamos la tabla dentro del scrollPane que ya existe
         scrollPane.setViewportView(tableRescates);
 
         lblContador = new JLabel("Conectando con el registro histórico de rescates...");

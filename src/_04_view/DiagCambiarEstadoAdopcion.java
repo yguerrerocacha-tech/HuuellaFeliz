@@ -17,8 +17,8 @@ public class DiagCambiarEstadoAdopcion extends JDialog {
     private JTextArea txtObservaciones;
     private int idAdopcionActual;
 
-    public DiagCambiarEstadoAdopcion(int codAdopcion, String estadoActual, String obsActuales) {
-        this.idAdopcionActual = codAdopcion;
+    public DiagCambiarEstadoAdopcion(int idAdopcion) {
+        this.idAdopcionActual = idAdopcion;
 
         setTitle("HuellaFeliz - Actualizar Estado del Trámite");
         setBounds(100, 100, 420, 360);
@@ -33,13 +33,12 @@ public class DiagCambiarEstadoAdopcion extends JDialog {
         getContentPane().add(panelForm);
         panelForm.setLayout(null);
 
-        JLabel lblTitulo = new JLabel("Actualizar Estado del Expediente N° " + codAdopcion);
+        JLabel lblTitulo = new JLabel("Actualizar Estado del Expediente N° " + idAdopcion);
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 16));
         lblTitulo.setForeground(new Color(44, 62, 80));
         lblTitulo.setBounds(25, 20, 350, 25);
         panelForm.add(lblTitulo);
 
-        // Campo: Estado del trámite
         JLabel lblEstado = new JLabel("Nuevo Estado del Trámite *");
         lblEstado.setFont(new Font("Segoe UI", Font.BOLD, 11));
         lblEstado.setForeground(Color.GRAY);
@@ -47,12 +46,10 @@ public class DiagCambiarEstadoAdopcion extends JDialog {
         panelForm.add(lblEstado);
 
         cboEstado = new JComboBox<>(new String[]{"En Proceso", "Aprobada", "Finalizada", "Rechazada"});
-        cboEstado.setSelectedItem(estadoActual);
         cboEstado.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         cboEstado.setBounds(25, 85, 350, 35);
         panelForm.add(cboEstado);
 
-        // Campo: Observaciones adicionales
         JLabel lblObservaciones = new JLabel("Observaciones / Notas de Evaluación");
         lblObservaciones.setFont(new Font("Segoe UI", Font.BOLD, 11));
         lblObservaciones.setForeground(Color.GRAY);
@@ -63,22 +60,21 @@ public class DiagCambiarEstadoAdopcion extends JDialog {
         scrollPane.setBounds(25, 160, 350, 80);
         panelForm.add(scrollPane);
 
-        txtObservaciones = new JTextArea(obsActuales.equals("Ninguna") ? "" : obsActuales);
+        txtObservaciones = new JTextArea("");
         txtObservaciones.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         txtObservaciones.setLineWrap(true);
         txtObservaciones.setWrapStyleWord(true);
         scrollPane.setViewportView(txtObservaciones);
 
-        // Botón: Guardar Cambios
         JButton btnGuardar = new JButton("ACTUALIZAR EXPEDIENTE");
         btnGuardar.setFont(new Font("Segoe UI", Font.BOLD, 12));
         btnGuardar.setForeground(Color.WHITE);
-        btnGuardar.setBackground(new Color(241, 196, 15)); // Botón amarillo corporativo
+        btnGuardar.setBackground(new Color(241, 196, 15)); 
         btnGuardar.setFocusPainted(false);
         btnGuardar.setBounds(25, 260, 350, 40);
         panelForm.add(btnGuardar);
 
-        // LOGICA DE ACTUALIZACIÓN
+        // LÓGICA DE ACTUALIZACIÓN CONECTADA AL DAO
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 String nuevoEstado = cboEstado.getSelectedItem().toString();
@@ -91,7 +87,7 @@ public class DiagCambiarEstadoAdopcion extends JDialog {
                     javax.swing.JOptionPane.showMessageDialog(null, "El estado del trámite fue actualizado con éxito.", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
                     dispose();
                 } else {
-                    javax.swing.JOptionPane.showMessageDialog(null, "Error al intentar actualizar el estado en MySQL.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    javax.swing.JOptionPane.showMessageDialog(null, "Error al intentar actualizar el estado en el servidor SQL Server.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

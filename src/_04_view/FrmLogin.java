@@ -35,7 +35,7 @@ public class FrmLogin extends JFrame {
         getContentPane().add(panelContenedor);
         panelContenedor.setLayout(null);
 
-        JLabel lblLogo = new JLabel("🐾 HuellaFeliz");
+        JLabel lblLogo = new JLabel("   HuellaFeliz");
         lblLogo.setForeground(new Color(46, 204, 113)); // Verde esmeralda brillante
         lblLogo.setFont(new Font("Segoe UI", Font.BOLD, 28));
         lblLogo.setBounds(40, 25, 310, 35);

@@ -11,7 +11,6 @@ import java.util.List;
 
 public class AdoptanteDAO {
 
-    // METODO DE INSERCIÓN (El que te está pidiendo el JDialog)
     public boolean insertar(Adoptante adoptante) {
         Connection cn = null;
         PreparedStatement pstm = null;
@@ -19,7 +18,7 @@ public class AdoptanteDAO {
 
         try {
             cn = Conexion.getConexion();
-            String sql = "INSERT INTO ADOPTANTE (dni, nombre, apellidos, telefono, direccion, correo, estadoVerificacion) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO ADOPTANTE (dni, nombre, apellidos, telefono, direccion, correo, ciudad) VALUES (?, ?, ?, ?, ?, ?, ?)";
             pstm = cn.prepareStatement(sql);
             pstm.setString(1, adoptante.getDni());
             pstm.setString(2, adoptante.getNombre());
@@ -27,7 +26,7 @@ public class AdoptanteDAO {
             pstm.setString(4, adoptante.getTelefono());
             pstm.setString(5, adoptante.getDireccion());
             pstm.setString(6, adoptante.getCorreo());
-            pstm.setString(7, adoptante.getEstadoVerificacion());
+            pstm.setString(7, adoptante.getCiudad());
 
             if (pstm.executeUpdate() > 0) {
                 insertado = true;
@@ -43,7 +42,6 @@ public class AdoptanteDAO {
         return insertado;
     }
 
-    // METODO PARA LISTAR LOS ADOPTANTES EN TU TABLA PRINCIPAL
     public List<Adoptante> listarTodos() {
         List<Adoptante> lista = new ArrayList<>();
         Connection cn = null;
@@ -52,7 +50,7 @@ public class AdoptanteDAO {
 
         try {
             cn = Conexion.getConexion();
-            String sql = "SELECT codAdoptante, dni, nombre, apellidos, telefono, direccion, correo, estadoVerificacion FROM ADOPTANTE";
+            String sql = "SELECT codAdoptante, dni, nombre, apellidos, telefono, direccion, correo, ciudad FROM ADOPTANTE";
             pstm = cn.prepareStatement(sql);
             rs = pstm.executeQuery();
 
@@ -65,7 +63,8 @@ public class AdoptanteDAO {
                 a.setTelefono(rs.getString("telefono"));
                 a.setDireccion(rs.getString("direccion"));
                 a.setCorreo(rs.getString("correo"));
-                a.setEstadoVerificacion(rs.getString("estadoVerificacion"));
+                a.setCiudad(rs.getString("ciudad"));
+                a.setEstadoVerificacion("Aprobado"); 
                 lista.add(a);
             }
         } catch (SQLException e) {
@@ -80,7 +79,6 @@ public class AdoptanteDAO {
         return lista;
     }
 
-    // METODO PARA MODIFICAR LOS DATOS (El botón amarillo)
     public boolean modificar(Adoptante adoptante) {
         Connection cn = null;
         PreparedStatement pstm = null;
@@ -88,7 +86,7 @@ public class AdoptanteDAO {
 
         try {
             cn = Conexion.getConexion();
-            String sql = "UPDATE ADOPTANTE SET dni=?, nombre=?, apellidos=?, telefono=?, direccion=?, correo=?, estadoVerificacion=? WHERE codAdoptante=?";
+            String sql = "UPDATE ADOPTANTE SET dni=?, nombre=?, apellidos=?, telefono=?, direccion=?, correo=?, ciudad=? WHERE codAdoptante=?";
             pstm = cn.prepareStatement(sql);
             pstm.setString(1, adoptante.getDni());
             pstm.setString(2, adoptante.getNombre());
@@ -96,7 +94,7 @@ public class AdoptanteDAO {
             pstm.setString(4, adoptante.getTelefono());
             pstm.setString(5, adoptante.getDireccion());
             pstm.setString(6, adoptante.getCorreo());
-            pstm.setString(7, adoptante.getEstadoVerificacion());
+            pstm.setString(7, adoptante.getCiudad());
             pstm.setInt(8, adoptante.getCodAdoptante());
 
             if (pstm.executeUpdate() > 0) {

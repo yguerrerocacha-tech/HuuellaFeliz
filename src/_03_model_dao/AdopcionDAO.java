@@ -19,8 +19,9 @@ public class AdopcionDAO {
 
         try {
             cn = Conexion.getConexion();
-            String sql = "SELECT a.codAdopcion, a.codAdoptante, a.codAnimal, a.fechaAdopcion, a.estadoTramite, a.observaciones, "
-                       + "CONCAT(ad.nombre, ' ', ad.apellidos) AS nomAdoptante, m.nomAnimal "
+            String sql = "SELECT a.codAdopcion, a.codAdoptante, a.codAnimal, a.fechaAdopcion, a.estadoTramite, "
+                       + "a.seguimientoPostAdopcion, a.observaciones, "
+                       + "(ad.nombre + ' ' + ad.apellidos) AS nomAdoptante, m.nomAnimal "
                        + "FROM ADOPCION a "
                        + "INNER JOIN ADOPTANTE ad ON a.codAdoptante = ad.codAdoptante "
                        + "INNER JOIN ANIMAL m ON a.codAnimal = m.codAnimal";
@@ -35,6 +36,7 @@ public class AdopcionDAO {
                 ad.setCodAnimal(rs.getInt("codAnimal"));
                 ad.setFechaAdopcion(rs.getDate("fechaAdopcion"));
                 ad.setEstadoTramite(rs.getString("estadoTramite"));
+                ad.setSeguimientoPostAdopcion(rs.getString("seguimientoPostAdopcion"));
                 ad.setObservaciones(rs.getString("observaciones"));
                 ad.setNomAdoptante(rs.getString("nomAdoptante"));
                 ad.setNomAnimal(rs.getString("nomAnimal"));
@@ -59,8 +61,7 @@ public class AdopcionDAO {
 
         try {
             cn = Conexion.getConexion();
-            String sql = "INSERT INTO ADOPCION (codAdoptante, codAnimal, fechaAdopcion, estadoTramite, observaciones) "
-                       + "VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO ADOPCION (codAdoptante, codAnimal, fechaAdopcion, estadoTramite, observaciones) VALUES (?, ?, ?, ?, ?)";
             pstm = cn.prepareStatement(sql);
             pstm.setInt(1, adopcion.getCodAdoptante());
             pstm.setInt(2, adopcion.getCodAnimal());
@@ -81,6 +82,7 @@ public class AdopcionDAO {
         }
         return insertado;
     }
+
     public boolean actualizarEstado(int codAdopcion, String nuevoEstado, String observaciones) {
         Connection cn = null;
         PreparedStatement pstm = null;

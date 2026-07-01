@@ -2,6 +2,8 @@ package _04_view;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Frame;
+
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -23,16 +25,16 @@ public class PanProcesoAdopciones extends JPanel {
         setSize(824, 571);
         setLayout(null);
 
-        JLabel lblTitulo = new JLabel("Control de Procesos de Adopción");
+        JLabel lblTitulo = new JLabel("Seguimiento y Procesos de Adopción");
         lblTitulo.setForeground(new Color(44, 62, 80));
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        lblTitulo.setBounds(25, 20, 400, 30);
+        lblTitulo.setBounds(25, 20, 450, 30);
         add(lblTitulo);
 
-        JLabel lblSubtitulo = new JLabel("Gestione las solicitudes de adopción, vinculación de familias y estados de trámites.");
+        JLabel lblSubtitulo = new JLabel("Gestione las solicitudes, evaluaciones de vivienda y el estado de los trámites de adopción.");
         lblSubtitulo.setForeground(new Color(127, 141, 141));
         lblSubtitulo.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lblSubtitulo.setBounds(25, 48, 550, 20);
+        lblSubtitulo.setBounds(25, 48, 600, 20);
         add(lblSubtitulo);
 
         txtBuscar = new JTextField();
@@ -49,7 +51,7 @@ public class PanProcesoAdopciones extends JPanel {
         btnBuscar.setBounds(355, 95, 100, 35);
         add(btnBuscar);
 
-        JButton btnNuevo = new JButton("+ Iniciar Trámite");
+        JButton btnNuevo = new JButton("+ Nueva Adopción");
         btnNuevo.setFont(new Font("Segoe UI", Font.BOLD, 12));
         btnNuevo.setForeground(Color.WHITE);
         btnNuevo.setBackground(new Color(46, 204, 113));
@@ -65,52 +67,46 @@ public class PanProcesoAdopciones extends JPanel {
             }
         });
 
-        JButton btnEditar = new JButton("Cambiar Estado");
+        JButton btnEditar = new JButton("Actualizar Trámite");
         btnEditar.setFont(new Font("Segoe UI", Font.BOLD, 12));
         btnEditar.setForeground(Color.WHITE);
         btnEditar.setBackground(new Color(241, 196, 15));
         btnEditar.setFocusPainted(false);
         btnEditar.setBounds(654, 95, 140, 35);
         add(btnEditar);
-
+        
         btnEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 int filaSeleccionada = tableAdopciones.getSelectedRow();
                 
                 if (filaSeleccionada == -1) {
                     javax.swing.JOptionPane.showMessageDialog(null, 
-                        "Por favor, seleccione un expediente de la tabla para cambiar su estado.", 
+                        "Por favor, seleccione un trámite de la tabla para actualizar.", 
                         "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
                 int modelRow = tableAdopciones.convertRowIndexToModel(filaSeleccionada);
+                int idAdopcion = Integer.parseInt(model.getValueAt(modelRow, 0).toString());
 
-                int codAdopcion = Integer.parseInt(model.getValueAt(modelRow, 0).toString());
-                String estadoActual = model.getValueAt(modelRow, 4).toString();
-                String obsActuales = model.getValueAt(modelRow, 5).toString();
-
-                DiagCambiarEstadoAdopcion diag = new DiagCambiarEstadoAdopcion(codAdopcion, estadoActual, obsActuales);
+                // Ahora sí va a compilar limpio porque ya creamos este constructor
+                DiagCambiarEstadoAdopcion diag = new DiagCambiarEstadoAdopcion(idAdopcion);
                 diag.setVisible(true);
                 
                 cargarDatosAdopciones();
             }
         });
-
-        // ==========================================
-        // 🛠️ CORRECCIÓN: CREACIÓN DEL SCROLLPANE Y MODELO
-        // ==========================================
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setBounds(25, 155, 769, 340);
         add(scrollPane);
 
-        String[] columnas = {"Trámite Nº", "Adoptante", "Mascota", "Fecha Apertura", "Estado Trámite", "Observaciones"};
+        String[] columnas = {"N° Trámite", "Adoptante", "Mascota", "Fecha Solicitud", "Estado Trámite", "Seguimiento"};
         
         model = new DefaultTableModel(null, columnas) {
             private static final long serialVersionUID = 1L;
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return false; 
             }
         };
 
@@ -120,10 +116,9 @@ public class PanProcesoAdopciones extends JPanel {
         tableAdopciones.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
         tableAdopciones.getTableHeader().setReorderingAllowed(false);
         
-        // Ahora sí, asociamos la tabla al scrollPane que acabamos de crear arriba
         scrollPane.setViewportView(tableAdopciones);
 
-        lblContador = new JLabel("Accediendo al histórico relacional de trámites...");
+        lblContador = new JLabel("Cargando solicitudes de adopción...");
         lblContador.setForeground(Color.GRAY);
         lblContador.setFont(new Font("Segoe UI", Font.ITALIC, 11));
         lblContador.setBounds(25, 505, 450, 15);
@@ -154,7 +149,7 @@ public class PanProcesoAdopciones extends JPanel {
         if (query.length() == 0) {
             sorter.setRowFilter(null);
         } else {
-            sorter.setRowFilter(javax.swing.RowFilter.regexFilter("(?i)" + query, 1, 2));
+            sorter.setRowFilter(javax.swing.RowFilter.regexFilter("(?i)" + query, 1, 2)); 
         }
     }
 
@@ -163,7 +158,7 @@ public class PanProcesoAdopciones extends JPanel {
             _03_model_dao.AdopcionDAO dao = new _03_model_dao.AdopcionDAO();
             java.util.List<_02_modelo_entidad.Adopcion> lista = dao.listarTodos();
             
-            model.setRowCount(0);
+            model.setRowCount(0); 
             
             if (lista != null && !lista.isEmpty()) {
                 for (_02_modelo_entidad.Adopcion ad : lista) {
@@ -173,16 +168,17 @@ public class PanProcesoAdopciones extends JPanel {
                         ad.getNomAnimal(),
                         ad.getFechaAdopcion(),
                         ad.getEstadoTramite(),
-                        ad.getObservaciones() == null || ad.getObservaciones().isEmpty() ? "Ninguna" : ad.getObservaciones()
+                        ad.getSeguimientoPostAdopcion() == null || ad.getSeguimientoPostAdopcion().isEmpty() 
+                            ? "Sin observaciones" : ad.getSeguimientoPostAdopcion()
                     };
                     model.addRow(fila);
                 }
-                lblContador.setText("Mostrando " + lista.size() + " expedientes de adopción activos.");
+                lblContador.setText("Mostrando " + lista.size() + " procesos de adopción en el sistema.");
             } else {
-                lblContador.setText("No hay expedientes de adopción registrados en el sistema.");
+                lblContador.setText("No hay trámites de adopción registrados actualmente.");
             }
         } catch (Exception e) {
-            System.out.println("Error al cargar los expedientes de adopción: " + e.getMessage());
+            System.out.println("Error al cargar la tabla de adopciones: " + e.getMessage());
             lblContador.setText("Error crítico al conectar con el servidor de adopciones.");
         }
     }

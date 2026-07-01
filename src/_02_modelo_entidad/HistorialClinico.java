@@ -9,14 +9,13 @@ public class HistorialClinico {
     private String veterinario;
     private String diagnostico;
     private String tratamiento;
+    private double costoAtencion; 
     private Date proximaCita;
     
-    // Atributo adicional para mostrar el nombre del animalito en los listados (JOIN)
-    private String nomAnimal;
+    private String nombreAnimal; 
 
     public HistorialClinico() {}
 
-    // Getters y Setters
     public int getCodHistorial() { return codHistorial; }
     public void setCodHistorial(int codHistorial) { this.codHistorial = codHistorial; }
 
@@ -35,9 +34,12 @@ public class HistorialClinico {
     public String getTratamiento() { return tratamiento; }
     public void setTratamiento(String tratamiento) { this.tratamiento = tratamiento; }
 
+    public double getCostoAtencion() { return costoAtencion; }
+    public void setCostoAtencion(double costoAtencion) { this.costoAtencion = costoAtencion; }
+
     public Date getProximaCita() { return proximaCita; }
     public void setProximaCita(Date proximaCita) { this.proximaCita = proximaCita; }
 
-    public String getNomAnimal() { return nomAnimal; }
-    public void setNomAnimal(String nomAnimal) { this.nomAnimal = nomAnimal; }
+    public String getNombreAnimal() { return nombreAnimal; }
+    public void setNombreAnimal(String nombreAnimal) { this.nombreAnimal = nombreAnimal; }
 }

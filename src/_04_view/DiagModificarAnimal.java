@@ -2,165 +2,184 @@ package _04_view;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import _02_modelo_entidad.Animal;
+import _03_model_dao.AnimalDAO;
 
 public class DiagModificarAnimal extends JDialog {
 
     private static final long serialVersionUID = 1L;
     private JTextField txtNombre;
-    private JTextField txtEspecie;
-    private JTextField txtRaza;
     private JTextField txtEdad;
+    private JTextField txtDescripcion;
     private JComboBox<String> cboSexo;
     private JComboBox<String> cboEstado;
-    private int idAnimalActual; // Guardamos el ID de la mascota a modificar
+    private JLabel lblNombreFoto;
+    
+    private Animal animalActual;
+    private String nombreFotoFinal;
 
     public DiagModificarAnimal(Animal animal) {
-        this.idAnimalActual = animal.getCodAnimal();
-        
-        setTitle("HuellaFeliz - Editar Datos de Mascota");
-        setBounds(100, 100, 450, 480);
+        this.animalActual = animal;
+        this.nombreFotoFinal = animal.getFoto();
+
+        setTitle("HuellaFeliz - Modificar Ficha de Mascota");
+        setBounds(100, 100, 420, 460);
         setLocationRelativeTo(null);
         setModal(true);
         setResizable(false);
         getContentPane().setLayout(null);
 
         JPanel panelForm = new JPanel();
-        panelForm.setBackground(new Color(255, 255, 255));
-        panelForm.setBounds(0, 0, 434, 441);
+        panelForm.setBackground(Color.WHITE);
+        panelForm.setBounds(0, 0, 404, 421);
         getContentPane().add(panelForm);
         panelForm.setLayout(null);
 
-        JLabel lblTitulo = new JLabel("Modificar Información de Mascota");
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        JLabel lblTitulo = new JLabel("Editar Mascota: " + animal.getNomAnimal());
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 16));
         lblTitulo.setForeground(new Color(44, 62, 80));
-        lblTitulo.setBounds(30, 20, 350, 25);
+        lblTitulo.setBounds(25, 15, 350, 25);
         panelForm.add(lblTitulo);
 
-        // Campo: Nombre
-        JLabel lblNombre = new JLabel("Nombre de la Mascota *");
-        lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 11));
-        lblNombre.setForeground(Color.GRAY);
-        lblNombre.setBounds(30, 65, 150, 15);
-        panelForm.add(lblNombre);
+        // Nombre
+        JLabel lblNom = new JLabel("Nombre de la Mascota *");
+        lblNom.setBounds(25, 55, 150, 15);
+        panelForm.add(lblNom);
 
         txtNombre = new JTextField(animal.getNomAnimal());
-        txtNombre.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        txtNombre.setBounds(30, 85, 370, 35);
+        txtNombre.setBounds(25, 75, 160, 35);
         panelForm.add(txtNombre);
 
-        // Campo: Especie
-        JLabel lblEspecie = new JLabel("Especie *");
-        lblEspecie.setFont(new Font("Segoe UI", Font.BOLD, 11));
-        lblEspecie.setForeground(Color.GRAY);
-        lblEspecie.setBounds(30, 135, 150, 15);
-        panelForm.add(lblEspecie);
-
-        txtEspecie = new JTextField(animal.getEspecie());
-        txtEspecie.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        txtEspecie.setBounds(30, 155, 170, 35);
-        panelForm.add(txtEspecie);
-
-        // Campo: Raza
-        JLabel lblRaza = new JLabel("Raza *");
-        lblRaza.setFont(new Font("Segoe UI", Font.BOLD, 11));
-        lblRaza.setForeground(Color.GRAY);
-        lblRaza.setBounds(230, 135, 150, 15);
-        panelForm.add(lblRaza);
-
-        txtRaza = new JTextField(animal.getRaza());
-        txtRaza.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        txtRaza.setBounds(230, 155, 170, 35);
-        panelForm.add(txtRaza);
-
-        // Campo: Edad
-        JLabel lblEdad = new JLabel("Edad Estimada (Años) *");
-        lblEdad.setFont(new Font("Segoe UI", Font.BOLD, 11));
-        lblEdad.setForeground(Color.GRAY);
-        lblEdad.setBounds(30, 205, 150, 15);
+        // Edad
+        JLabel lblEdad = new JLabel("Edad (Años) *");
+        lblEdad.setBounds(210, 55, 150, 15);
         panelForm.add(lblEdad);
 
         txtEdad = new JTextField(String.valueOf(animal.getEdad()));
-        txtEdad.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        txtEdad.setBounds(30, 225, 170, 35);
+        txtEdad.setBounds(210, 75, 165, 35);
         panelForm.add(txtEdad);
 
-        // Campo: Sexo
+        // Sexo
         JLabel lblSexo = new JLabel("Sexo *");
-        lblSexo.setFont(new Font("Segoe UI", Font.BOLD, 11));
-        lblSexo.setForeground(Color.GRAY);
-        lblSexo.setBounds(230, 205, 150, 15);
+        lblSexo.setBounds(25, 125, 100, 15);
         panelForm.add(lblSexo);
 
-        cboSexo = new JComboBox<>(new String[]{"M", "F"});
+        cboSexo = new JComboBox<>(new String[] { "M", "F" });
         cboSexo.setSelectedItem(animal.getSexo());
-        cboSexo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        cboSexo.setBounds(230, 225, 170, 35);
+        cboSexo.setBounds(25, 145, 160, 35);
         panelForm.add(cboSexo);
 
-        // Campo: Estado Actual
-        JLabel lblEstado = new JLabel("Estado de Disponibilidad *");
-        lblEstado.setFont(new Font("Segoe UI", Font.BOLD, 11));
-        lblEstado.setForeground(Color.GRAY);
-        lblEstado.setBounds(30, 275, 250, 15);
+        // Estado
+        JLabel lblEstado = new JLabel("Estado Clínico / Adopción *");
+        lblEstado.setBounds(210, 125, 180, 15);
         panelForm.add(lblEstado);
 
-        cboEstado = new JComboBox<>(new String[]{"Disponible", "En Tratamiento", "Adoptado", "Reservado"});
+        cboEstado = new JComboBox<>(new String[] { "Disponible", "Adoptado", "En Tratamiento", "Reservado" });
         cboEstado.setSelectedItem(animal.getEstado());
-        cboEstado.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        cboEstado.setBounds(30, 295, 370, 35);
+        cboEstado.setBounds(210, 145, 165, 35);
         panelForm.add(cboEstado);
 
-        // Botón: Actualizar
-        JButton btnGuardar = new JButton("GUARDAR CAMBIOS");
-        btnGuardar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        // Descripción
+        JLabel lblDesc = new JLabel("Descripción de Hallazgo o Cuidados");
+        lblDesc.setBounds(25, 195, 300, 15);
+        panelForm.add(lblDesc);
+
+        txtDescripcion = new JTextField(animal.getDescripcion());
+        txtDescripcion.setBounds(25, 215, 350, 35);
+        panelForm.add(txtDescripcion);
+
+        // Control de Foto
+        JLabel lblFotoTitle = new JLabel("Fotografía de Identificación");
+        lblFotoTitle.setBounds(25, 265, 200, 15);
+        panelForm.add(lblFotoTitle);
+
+        JButton btnExaminar = new JButton("Cambiar Foto");
+        btnExaminar.setBounds(25, 285, 130, 35);
+        panelForm.add(btnExaminar);
+
+        lblNombreFoto = new JLabel(animal.getFoto() == null ? "Ninguna foto" : animal.getFoto());
+        lblNombreFoto.setFont(new Font("Segoe UI", Font.ITALIC, 11));
+        lblNombreFoto.setForeground(Color.GRAY);
+        lblNombreFoto.setBounds(165, 295, 210, 15);
+        panelForm.add(lblNombreFoto);
+
+        // Botón Guardar
+        JButton btnGuardar = new JButton("GUARDAR CAMBIOS EN FICHA");
+        btnGuardar.setBackground(new Color(241, 196, 15));
         btnGuardar.setForeground(Color.WHITE);
-        btnGuardar.setBackground(new Color(241, 196, 15)); // Color amarillo para identificar edición
-        btnGuardar.setFocusPainted(false);
-        btnGuardar.setBounds(30, 365, 370, 40);
+        btnGuardar.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnGuardar.setBounds(25, 350, 350, 45);
         panelForm.add(btnGuardar);
 
-   
+        // INTERACCIÓN SUBIR FOTO NUEVA Y COPIARLA FÍSICAMENTE
+        btnExaminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes (JPG, PNG)", "jpg", "png", "jpeg");
+                chooser.setFileFilter(filter);
+                int returnVal = chooser.showOpenDialog(null);
+                
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        File fileOrigen = chooser.getSelectedFile();
+                        nombreFotoFinal = fileOrigen.getName(); // Ejemplo: "balto.jpg"
+                        
+                        // Crear la carpeta de destino dentro del proyecto si no existe
+                        File carpetaDestino = new File("src/resources");
+                        if (!carpetaDestino.exists()) {
+                            carpetaDestino.mkdirs();
+                        }
+                        
+                        // Definir la ruta final del archivo copiado
+                        File fileDestino = new File(carpetaDestino, nombreFotoFinal);
+                        
+                        // Copiar el archivo físico al proyecto reemplazándolo si ya existe
+                        Files.copy(fileOrigen.toPath(), fileDestino.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        
+                        lblNombreFoto.setText(nombreFotoFinal);
+                    } catch (Exception ex) {
+                        System.out.println("Error al copiar la imagen física: " + ex.getMessage());
+                        javax.swing.JOptionPane.showMessageDialog(null, "No se pudo cargar físicamente la foto.", "Error de Archivo", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        // ACCIÓN DE GUARDADO DE MODIFICACIÓN
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                String nombre = txtNombre.getText().trim();
-                String especie = txtEspecie.getText().trim();
-                String raza = txtRaza.getText().trim();
-                String edadStr = txtEdad.getText().trim();
-
-                if (nombre.isEmpty() || especie.isEmpty() || raza.isEmpty() || edadStr.isEmpty()) {
-                    javax.swing.JOptionPane.showMessageDialog(null, "Complete todos los campos obligatorios.", "Validación", javax.swing.JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-
                 try {
-                    int edad = Integer.parseInt(edadStr);
+                    if (txtNombre.getText().trim().isEmpty() || txtEdad.getText().trim().isEmpty()) {
+                        javax.swing.JOptionPane.showMessageDialog(null, "Complete los campos obligatorios.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
 
-                    Animal a = new Animal();
-                    a.setCodAnimal(idAnimalActual);
-                    a.setNomAnimal(nombre);
-                    a.setEspecie(especie);
-                    a.setRaza(raza); 
-                    a.setEdad(edad);
-                    a.setSexo(cboSexo.getSelectedItem().toString());
-                    a.setEstado(cboEstado.getSelectedItem().toString());
+                    animalActual.setNomAnimal(txtNombre.getText().trim());
+                    animalActual.setEdad(Integer.parseInt(txtEdad.getText().trim()));
+                    animalActual.setSexo(cboSexo.getSelectedItem().toString());
+                    animalActual.setEstado(cboEstado.getSelectedItem().toString());
+                    animalActual.setDescripcion(txtDescripcion.getText().trim());
+                    animalActual.setFoto(nombreFotoFinal); 
 
-                    _03_model_dao.AnimalDAO dao = new _03_model_dao.AnimalDAO();
-                    boolean exito = dao.modificar(a);
-
-                    if (exito) {
-                        javax.swing.JOptionPane.showMessageDialog(null, "Datos de la mascota actualizados con éxito.", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                    AnimalDAO dao = new AnimalDAO();
+                    if (dao.modificar(animalActual)) {
+                        javax.swing.JOptionPane.showMessageDialog(null, "Ficha modificada con éxito en SQL Server.", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
                         dispose();
                     } else {
-                        javax.swing.JOptionPane.showMessageDialog(null, "Error al actualizar en la base de datos.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                        javax.swing.JOptionPane.showMessageDialog(null, "Error al intentar modificar el registro.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                     }
-                } catch (NumberFormatException ex) {
+                } catch (Exception ex) {
                     javax.swing.JOptionPane.showMessageDialog(null, "La edad debe ser un número entero.", "Error de Formato", javax.swing.JOptionPane.ERROR_MESSAGE);
                 }
             }
